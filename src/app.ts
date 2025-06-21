@@ -8,19 +8,22 @@ import express from "express";
 import morgan from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
+import auth from "./routes/auth";
 
 const app = express();
 const port = 3000;
-const mongo =
-  "mongodb+srv://veecipher:YXqia9Jflej5bzBY@cluster0.zdnopbg.mongodb.net/ImageProcessorDB?retryWrites=true&w=majority&appName=Cluster0";
-mongoose
-  .connect(mongo)
-  .then(() =>
-    app.listen(port, () => {
-      console.log("Server is live on port:", port);
-    })
-  )
-  .catch((err) => console.log(err));
+const mongo = process.env.MONGO;
+if (mongo) {
+  mongoose
+    .connect(mongo)
+    .then(() =>
+      app.listen(port, () => {
+        console.log("Server is live on port:", port);
+      })
+    )
+    .catch((err) => console.log(err));
+}
+
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true })); //to parse form data
@@ -30,3 +33,5 @@ app.use(
     credentials: true,
   })
 );
+
+app.use("/auth", auth);
