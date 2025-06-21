@@ -1,9 +1,9 @@
 import { NextFunction, Response, Request } from "express";
-import jwt from "jsonwebtoken";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { User } from "../models/user";
 
 interface authRequest extends Request {
-  user: any;
+  user?: JwtPayload;
 }
 
 export const authenticateToken = async (
@@ -21,25 +21,16 @@ export const authenticateToken = async (
   try {
     const authHeader = req.headers["authorization"];
     const token = authHeader && authHeader.split(" ")[1];
-    if (token == null) {
+    if (token === null) {
       res.status(401).json({ message: "Access Denied: No token provided." });
+      return;
     }
 
-    const decoded =
-      token &&
-      (jwt.verify(token, process.env.JWT_SECRET, (err, user) => {
-        if (err) {
-          console.error("JWT Verification Error:", err);
-          // Handle specific JWT errors if needed (e.g., TokenExpiredError, JsonWebTokenError)
-          if (err instanceof jwt.TokenExpiredError) {
-            res.status(401).json({ message: "Access Denied: Token expired." });
-          }
-          res.status(403).json({ message: "Access Denied: Invalid token." });
-        }
-      }) as any);
+    const decoded = token && (jwt.verify(token, process.env.JWT_SECRET) as any);
     const user = await User.findById(decoded.userId);
     if (!user || user.userToken !== token) {
       res.status(401).json({ message: "Token expired" });
+      return;
     }
     req.user = decoded;
     next();

@@ -9,6 +9,8 @@ import morgan from "morgan";
 import cors from "cors";
 import mongoose from "mongoose";
 import auth from "./routes/auth";
+import images from "./routes/images";
+import { authenticateToken } from "./utils/authToken";
 
 const app = express();
 const port = 3000;
@@ -35,3 +37,4 @@ app.use(
 );
 
 app.use("/auth", auth);
+app.use("/image", authenticateToken, images);
