@@ -7,6 +7,7 @@ const imageSchema = new mongoose.Schema({
     ref: "user",
     required: true,
   },
+  publicId: { type: String, required: true },
 });
 
 export const Image = mongoose.model("image", imageSchema);

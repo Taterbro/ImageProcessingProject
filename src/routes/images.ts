@@ -1,5 +1,5 @@
 import express from "express";
-import { uploadImage } from "../controllers/images";
+import { transformImage, uploadImage } from "../controllers/images";
 import multer from "multer";
 
 const images = express.Router();
@@ -15,5 +15,6 @@ const upload = multer({
 });
 
 images.post("/", upload.single("photo"), uploadImage);
+images.post("/:id/transform", transformImage);
 
 export default images;
