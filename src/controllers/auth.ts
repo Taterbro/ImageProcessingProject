@@ -54,7 +54,7 @@ export const login = async (req: Request, res: Response) => {
         { user: req.body.username, userId: user._id },
         process.env.JWT_SECRET,
         {
-          expiresIn: "3h",
+          expiresIn: "5 days",
         }
       );
       await User.findByIdAndUpdate(user._id, { userToken: token });
