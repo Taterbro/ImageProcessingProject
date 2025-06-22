@@ -60,3 +60,18 @@ export const transformImage = async (req: authRequest, res: Response) => {
     return;
   }
 };
+
+export const getImages = async (req: authRequest, res: Response) => {
+  try {
+    const images = await Edited.find({ userId: req.user?.userId });
+    if (!images) {
+      res.status(404).json({ message: "NO images found" });
+      return;
+    }
+    res.json({ message: "List of images you've edited", images: images });
+    return;
+  } catch (err: any) {
+    res.status(500).json({ message: "something went wrong" });
+    return;
+  }
+};
