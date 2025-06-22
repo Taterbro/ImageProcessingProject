@@ -3,6 +3,7 @@ import { uploadToCloudinary } from "../utils/cloudinaryUpload";
 import cloudinary from "../utils/cloudinaryUpload";
 import { Image } from "../models/image";
 import { authRequest } from "../utils/authToken";
+import { Edited } from "../models/editedImage";
 
 export const uploadImage = async (req: authRequest, res: Response) => {
   try {
@@ -42,6 +43,11 @@ export const transformImage = async (req: authRequest, res: Response) => {
     const edited =
       publicId &&
       cloudinary.url(publicId, { transformation: req.body.transformations });
+    const newedit = new Edited({
+      url: edited,
+      userId: req.user?.userId,
+    });
+    await newedit.save();
     res.json({
       message: "Photo edited",
       photo: edited,
